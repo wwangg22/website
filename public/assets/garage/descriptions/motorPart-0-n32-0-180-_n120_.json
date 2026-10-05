@@ -1,0 +1,6 @@
+{
+    "title": "Stator",
+    "purpose" : "In a brushless DC (BLDC) motor, the stator consists of a series of coils or windings that create a rotating magnetic field when electric current flows through them. This magnetic field interacts with the rotor, the moving part of the motor that contains the magnets, causing it to spin.",
+    "design": "This stator is modeled from a 100KV Sunnysky motor, which has 21 pole pairs and 36 stator teeth. To make the gearbox more compact, I wanted to place the ring gear between the stator teeth, but the cylinder at the center of the stator was in the way. I tried taking the coils off the stator, but it would not budge, so I placed the ring gear slightly above the cylinder instead.",
+    "images": []
+}

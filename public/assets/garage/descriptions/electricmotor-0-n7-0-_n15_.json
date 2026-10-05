@@ -1,0 +1,6 @@
+{
+    "title": "BLDC Motor",
+    "purpose" : "The BLDC motor is the main component of the electric motor assembly. It consists of a stator and a rotor. The stator is the stationary part of the motor that contains the coils or windings, while the rotor is the moving part that contains the magnets. When electric current flows through the stator coils, it creates a rotating magnetic field that interacts with the rotor magnets, causing the rotor to spin. The motor is connected to the gearbox through the back mount.",
+    "design": "This electric motor is modeled from a 100KV U8 motor, which has 21 pole pairs and 36 stator teeth. It has a diameter of 86.8 mm and a thickness of 26.5 mm, making it slightly thicker than the previous Sunnysky motor.",
+    "images": []
+}

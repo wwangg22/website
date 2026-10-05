@@ -1,0 +1,744 @@
+{
+  "models": [
+    {
+      "name": "Garry",
+      "thumbnail": "garage/thumbnails/garry-clay.png",
+      "versions": [
+        {
+          "version": "0",
+          "data": {
+            "name": "garry",
+            "opacity": 1,
+            "transparent": false,
+            "metalness": 1,
+            "roughness": 0.5,
+            "side": "FrontSide",
+            "camera_positions": [
+              {
+                "name": "begin",
+                "position": [
+                  300,
+                  0,
+                  0
+                ],
+                "lookAt": [
+                  0,
+                  0,
+                  0
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/4 bg-gray-500 bg-opacity-70 absolute top-1/2 left-0 lg:left-10 transform -translate-y-1/2 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "Garry",
+                    "tailwind": "text-white text-2xl lg:text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "Garry is a bipedal robot from a class I took at Columbia, with an average height of 150 mm. Eight servos give him 8 degrees of freedom. In MuJoCo he was tested extensively and reached a maximum walking distance of 1.1 m using TD3. Unfortunately, the servos provided by the class did not offer a torque control mode, so the RL algorithms could not be tested on the physical robot.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "dc-dc_converter",
+                "position": [
+                  9,
+                  186,
+                  33
+                ],
+                "lookAt": [
+                  -23,
+                  145,
+                  0
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/2 sm:w-full bg-gray-500 bg-opacity-70 absolute top-1/2 right-0 lg:right-5 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "DC-DC Converter",
+                    "tailwind": "text-white text-2xl lg:text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "The battery supplies power at 12 volts, while the servos run on 8 volts. The DC-DC converter steps the 12 volts from the battery down to a usable 8 volts for the servos.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "MPU",
+                "position": [
+                  30,
+                  173,
+                  0
+                ],
+                "lookAt": [
+                  7,
+                  145,
+                  0
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/4 bg-gray-500 bg-opacity-70 absolute top-1/2 lg:left-5 left-0 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "MPU",
+                    "tailwind": "text-white text-2xl lg:text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "The MPU relays acceleration and orientation data to the controller. This one is an MPU-6050.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "servo_controller",
+                "position": [
+                  34,
+                  152,
+                  -69
+                ],
+                "lookAt": [
+                  34,
+                  121,
+                  -16
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/2 bg-gray-500 bg-opacity-70 absolute top-1/2 lg:left-5 left-0 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "Servo Controller",
+                    "tailwind": "text-white text-2xl lg:text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "A small servo controller for the LX16A servos. It can control up to 8 motors, with each port connecting to 4 daisy-chained servos.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "raspberry_pi",
+                "position": [
+                  42,
+                  119,
+                  -49
+                ],
+                "lookAt": [
+                  32.8,
+                  106,
+                  -16
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/2 bg-gray-500 bg-opacity-70 absolute top-1/2 lg:right-5 right-0 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "Raspberry Pi",
+                    "tailwind": "text-white text-2xl lg:text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "The Raspberry Pi 4 is Garry's brain. It takes 12 volt power from the battery, sends signals to the servo controller, and receives visual input from the camera.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "camera",
+                "position": [
+                  138,
+                  119,
+                  -47
+                ],
+                "lookAt": [
+                  87,
+                  118,
+                  0
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/4 bg-gray-500 bg-opacity-70 absolute top-3/4 lg:top-1/2 lg:left-5 left-0 transform -translate-y-1/2 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "Camera",
+                    "tailwind": "text-white text-2xl lg:text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "An Arduino camera was intended to provide vision for the robot, but it never arrived from Amazon.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "battery",
+                "position": [
+                  138,
+                  93,
+                  0
+                ],
+                "lookAt": [
+                  87,
+                  92,
+                  0
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/4 bg-gray-500 bg-opacity-50 absolute top-3/4 lg:right-5 right-0 transform -translate-y-1/2 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "Battery",
+                    "tailwind": "text-white text-2xl lg:text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "A 12 volt TalentCell battery provides power to the whole robot.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "feet",
+                "position": [
+                  116,
+                  -10,
+                  211
+                ],
+                "lookAt": [
+                  -12,
+                  -36,
+                  0
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/4 bg-gray-500 bg-opacity-70 absolute top-1/2 lg:left-5 left-0 transform -translate-y-1/2 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "Feet",
+                    "tailwind": "text-white text-2xl lg:text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "The foot design was heavily inspired by Cassie. A passive joint at the back lets the servo weight be concentrated in the robot's upper hip, mimicking the structure of an ostrich's foot. A separate servo adjusts the ankle.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "end",
+                "position": [
+                  300,
+                  0,
+                  241
+                ],
+                "lookAt": [
+                  0,
+                  0,
+                  0
+                ],
+                "page_info": {
+                  "container": {
+                    "tailwind": "w-[full] lg:w-1/2 bg-gray-500 bg-opacity-70 absolute top-1/2 lg:left-5 left-0 transform -translate-y-1/2 p-4 mx-5"
+                  },
+                  "title": {
+                    "text": "Journey Video",
+                    "tailwind": "text-white text-info_lg font-bold py-5"
+                  },
+                  "paragraph": [
+                    {
+                      "type": "p",
+                      "text": "The journey video for Garry, including some RL clips.",
+                      "tailwind": "text-white text-base lg:text-2xl font-serif"
+                    },
+                    {
+                      "type": "iframe",
+                      "src": "https://www.youtube.com/embed/904Spc2Laxc",
+                      "tailwind": "absolute top-0 left-0 w-full h-full",
+                      "title": "Garry Robot Video"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "parts": [
+            {
+              "file": "garry-n20-0-0-0-0-90-.STL",
+              "description": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "actuator",
+      "thumbnail": "garage/thumbnails/actuator-clay.png",
+      "versions": [
+        {
+          "version": "0",
+          "data": {
+            "name": "robotic_actuator_v1",
+            "opacity": 0.8,
+            "transparent": true,
+            "metalness": 1,
+            "roughness": 0.5,
+            "expand": true,
+            "spin": {
+              "sun": 0.06,
+              "planet": 0.01,
+              "rotor": -0.06
+            }
+          },
+          "parts": [
+            {
+              "file": "motorPart-0-n32-0-180-_n120_.STL",
+              "description": {
+                "title": "Stator",
+                "purpose": "In a brushless DC (BLDC) motor, the stator consists of a series of coils or windings that create a rotating magnetic field when electric current flows through them. This magnetic field interacts with the rotor, the moving part of the motor that contains the magnets, causing it to spin.",
+                "design": "This stator is modeled from a 100KV Sunnysky motor, which has 21 pole pairs and 36 stator teeth. To make the gearbox more compact, I wanted to place the ring gear between the stator teeth, but the cylinder at the center of the stator was in the way. I tried taking the coils off the stator, but it would not budge, so I placed the ring gear slightly above the cylinder instead.",
+                "images": []
+              }
+            },
+            {
+              "file": "planetlocker-0-n25-0-_0_(2(.STL",
+              "description": {
+                "title": "Planet Gear",
+                "purpose": "The planet locker and the planet gears are drawn together. They are connected by ball bearings and a rod, and the planet gears are free to rotate. As the planet gears rotate around the ring gear, the planet locker rotates at the designed gear reduction ratio. The planet locker is connected to the output shaft.",
+                "design": "This planetary gearbox is designed with a reduction ratio of 6 (6 input turns produce 1 output turn). Each planet gear has 32 teeth, the sun gear has 16 teeth, and the ring gear has 80 teeth. For simplicity, each gear was designed with a module of 1, so a gear with 32 teeth is 32 mm in diameter.",
+                "images": []
+              }
+            },
+            {
+              "file": "ringgear-0-12-0-_69_.STL",
+              "description": {
+                "title": "Ring Gear",
+                "purpose": "The ring gear is the outermost gear of a planetary gearbox, and the planet gears rotate along it. Depending on the design, the ring gear can either remain stationary or rotate. In most robotic actuators, the ring gear is held stationary while the planet gears rotate.",
+                "design": "This ring gear is connected to the sun gear through a ball bearing. It has 80 teeth and a diameter of 80 mm, giving it a module of 1.",
+                "images": []
+              }
+            },
+            {
+              "file": "ringgearcap-0-n17-0-180-_n67_.STL",
+              "description": {
+                "title": "Ring Gear Cap",
+                "purpose": "The ring gear capsule was split into two parts for ease of assembly. The ring gear cap connects the ring gear to the stator and the sun gear.",
+                "design": "The cap is designed to fit the dimensions of the stator exactly, so that it remains stationary with the stator. The output shaft is directed outward toward the bottom of the motor.",
+                "images": []
+              }
+            },
+            {
+              "file": "rotor-0-n28-0-180-_n156_.STL",
+              "description": {
+                "title": "Rotor",
+                "purpose": "The rotor of a brushless DC (BLDC) motor is the part of the motor that rotates. It consists of permanent magnets arranged around a central shaft. When the stator's electromagnets are energized, they create a magnetic field that interacts with the rotor's permanent magnets, causing the rotor to spin.",
+                "design": "This rotor was designed to fit the 100KV Sunnysky motor, which has 21 pole pairs and 36 stator teeth. The small ridges on the inside of the rotor hold the permanent magnets and are designed with the same air gap as the original motor. The rotor connects to the sun gear through the outer shell. Since I 3D printed most of my build and my 3D printer is not precise enough to produce a reliable rotor, I relied on the original rotor in the second and third iterations.",
+                "images": []
+              }
+            },
+            {
+              "file": "sungear-0-7-0-_150_.STL",
+              "description": {
+                "title": "Sun Gear",
+                "purpose": "The sun gear is connected to the input shaft, which means it receives power directly from the motor. As the sun gear spins, it turns the planet gears, which then rotate around the ring gear, the outermost gear in the system. This arrangement allows the planetary gearbox to provide high torque and smooth power transmission in a compact design.",
+                "design": "In this sun gear, the long shafts connect the sun gear to the rotor. This design is compact, allowing the planetary gearbox to be placed inside the motor. However, during operation the entire outer shell rotates at the same speed as the rotor, which can be quite dangerous. Designing this part was fun, but because I chose a double herringbone pattern, installation was very difficult, which ultimately led me to design a second version.",
+                "images": []
+              }
+            }
+          ]
+        },
+        {
+          "version": "1",
+          "data": {
+            "name": "robotic_actuator_v2",
+            "opacity": 0.8,
+            "transparent": true,
+            "metalness": 1,
+            "roughness": 0.5,
+            "expand": true,
+            "spin": {
+              "sun": 0.06,
+              "planet": 0.01,
+              "rotor": -0.06
+            }
+          },
+          "parts": [
+            {
+              "file": "backmount-0-0-0-0-180-_n100_.STL",
+              "description": {
+                "title": "Back Mount",
+                "purpose": "The main purpose of the back mount is to hold the actuator together and provide a mounting point for the ODrive controllers. The gap in the center allows the controllers to read a magnetic encoder connected to the motor shaft.",
+                "design": "I chose a triangular back mount mostly because I liked the look of it. Not having a wall on all sides also made assembling the actuator much easier. The holes on the back of the back mount are mounting holes for the ODrive controller.",
+                "images": []
+              }
+            },
+            {
+              "file": "electricmotor-0-n19-16-_n50_.STL",
+              "description": {
+                "title": "BLDC Motor",
+                "purpose": "The BLDC motor is the main component of the electric motor assembly. It consists of a stator and a rotor. The stator is the stationary part of the motor that contains the coils or windings, while the rotor is the moving part that contains the magnets. When electric current flows through the stator coils, it creates a rotating magnetic field that interacts with the rotor magnets, causing the rotor to spin. The motor is connected to the gearbox through the back mount.",
+                "design": "This electric motor is modeled from a 100KV Sunnysky motor, which has 21 pole pairs and 36 stator teeth. It has a diameter of 86.8 mm and a thickness of 24.5 mm. In this version, the actuator was designed to be unobtrusive to the electric motor.",
+                "images": []
+              }
+            },
+            {
+              "file": "outergearholder-0-36-0_130_.STL",
+              "description": {
+                "title": "Actuator Cap",
+                "purpose": "The outer gear holder does what its name suggests: it holds the outer gear in place and provides an opening for the output shaft.",
+                "design": "This part was designed simply to meet the requirements of the actuator. The back mount attaches to the three holes, and the output shaft comes out through the middle hole.",
+                "images": []
+              }
+            },
+            {
+              "file": "planetlocker-0-23-16-_100_(0(2(.STL",
+              "description": {
+                "title": "Planet Gear",
+                "purpose": "The planet locker and the planet gears are drawn together. They are connected by ball bearings and a rod, and the planet gears are free to rotate. As the planet gears rotate around the ring gear, the planet locker rotates at the designed gear reduction ratio. The planet locker is connected to the output shaft.",
+                "design": "This planet locker is quite similar to the previous version, and each planet gear has 32 teeth. The main difference is that the output shaft is much shorter than before, which again increases its strength and rigidity, allowing it to output higher torque before failure.",
+                "images": []
+              }
+            },
+            {
+              "file": "ring-0-10-0-180-_40_.STL",
+              "description": {
+                "title": "Ring Gear",
+                "purpose": "The ring gear is the outermost gear of a planetary gearbox, and the planet gears rotate along it. Depending on the design, the ring gear can either remain stationary or rotate. In most robotic actuators, the ring gear is held stationary while the planet gears rotate.",
+                "design": "This ring gear is almost the same as the previous one (80 teeth, gear module of 1), except that its overall shape has been changed to fit the design of the actuator. The inner workings remain identical.",
+                "images": []
+              }
+            },
+            {
+              "file": "sun-2-4-16-_n5_.STL",
+              "description": {
+                "title": "Sun Gear",
+                "purpose": "The sun gear is connected to the input shaft, which means it receives power directly from the motor. As the sun gear spins, it turns the planet gears, which then rotate around the ring gear, the outermost gear in the system. This arrangement allows the planetary gearbox to provide high torque and smooth power transmission in a compact design.",
+                "design": "This sun gear is much smaller than the previous version, but it has the same number of teeth (16).",
+                "images": []
+              }
+            }
+          ]
+        },
+        {
+          "version": "2",
+          "data": {
+            "name": "robotic_actuator_v3",
+            "opacity": 0.8,
+            "transparent": true,
+            "metalness": 1,
+            "roughness": 0.5,
+            "expand": true,
+            "spin": {
+              "sun": 0.06,
+              "planet": 0.01,
+              "rotor": -0.06
+            }
+          },
+          "parts": [
+            {
+              "file": "Odrivecap-0-n51-0-180-180-_n150_.STL",
+              "description": {
+                "title": "ODrive Cap",
+                "purpose": "The ODrive cap protects the ODrive controller located underneath it.",
+                "design": "This is a purely functional part, made out of necessity.",
+                "images": []
+              }
+            },
+            {
+              "file": "electricmotor-0-n7-0-_n15_.STL",
+              "description": {
+                "title": "BLDC Motor",
+                "purpose": "The BLDC motor is the main component of the electric motor assembly. It consists of a stator and a rotor. The stator is the stationary part of the motor that contains the coils or windings, while the rotor is the moving part that contains the magnets. When electric current flows through the stator coils, it creates a rotating magnetic field that interacts with the rotor magnets, causing the rotor to spin. The motor is connected to the gearbox through the back mount.",
+                "design": "This electric motor is modeled from a 100KV U8 motor, which has 21 pole pairs and 36 stator teeth. It has a diameter of 86.8 mm and a thickness of 26.5 mm, making it slightly thicker than the previous Sunnysky motor.",
+                "images": []
+              }
+            },
+            {
+              "file": "planetlockert-0-35-0-_110_(0(2(.STL",
+              "description": {
+                "title": "Planet Gear",
+                "purpose": "The planet locker and the planet gears are drawn together. They are connected by ball bearings and a rod, and the planet gears are free to rotate. As the planet gears rotate around the ring gear, the planet locker rotates at the designed gear reduction ratio. The planet locker is connected to the output shaft.",
+                "design": "This planet locker is identical to the previous version. The planet gears have 32 teeth and a gear module of 1, and the reduction ratio is 6.",
+                "images": []
+              }
+            },
+            {
+              "file": "ringgear-0-26-0-_55_.STL",
+              "description": {
+                "title": "Ring Gear",
+                "purpose": "The ring gear is the outermost gear of a planetary gearbox, and the planet gears rotate along it. Depending on the design, the ring gear can either remain stationary or rotate. In most robotic actuators, the ring gear is held stationary while the planet gears rotate.",
+                "design": "This ring gear has the same inner workings as the previous version (80 teeth and a gear module of 1). The raised ridges were added to make assembly easier.",
+                "images": []
+              }
+            },
+            {
+              "file": "shell-0-n20-0-_n85_.STL",
+              "description": {
+                "title": "Shell",
+                "purpose": "The shell of the actuator houses the motor and the gearbox. It is the outermost part of the actuator and is designed to protect the internal components from damage. The shell is typically made of a durable material such as aluminum or steel. It also provides a mounting point for the actuator, allowing it to be attached to a robot or other device.",
+                "design": "This design protected the ODrive controllers, which were unprotected in previous versions. 3D printing this piece turned out to be a problem, since one side needed a lot of support. In the end, the bottom of the shell (where the ODrive controllers were attached) did not need a very smooth surface, since the ODrives were elevated anyway, so it turned out fine.",
+                "images": []
+              }
+            },
+            {
+              "file": "shortenedsunspiral-0-18-0-_18_.STL",
+              "description": {
+                "title": "Sun Gear",
+                "purpose": "The sun gear is connected to the input shaft, which means it receives power directly from the motor. As the sun gear spins, it turns the planet gears, which then rotate around the ring gear, the outermost gear in the system. This arrangement allows the planetary gearbox to provide high torque and smooth power transmission in a compact design.",
+                "design": "This sun gear is the same as the previous one, just shortened slightly to fit the U8 motor (which is slightly thicker than the Sunnysky motors).",
+                "images": []
+              }
+            },
+            {
+              "file": "topcap-0-46-0-_140_.STL",
+              "description": {
+                "title": "Actuator Cap",
+                "purpose": "The top cap holds the outer gear stationary and provides an opening for the output shaft.",
+                "design": "This top cap serves essentially the same function as the outer gear holder in the previous version. The small ridges make assembly easier.",
+                "images": []
+              }
+            }
+          ]
+        },
+        {
+          "version": "3",
+          "data": {
+            "name": "robotic_actuator_v4",
+            "opacity": 0.8,
+            "transparent": true,
+            "metalness": 1,
+            "roughness": 0.5,
+            "expand": true,
+            "spin": {
+              "sun": 0.06,
+              "planet": 0.01,
+              "rotor": -0.06
+            }
+          },
+          "parts": [
+            {
+              "file": "contollerprotectorv5-0-n35-0-_n170_.STL",
+              "description": {
+                "title": "Controller Protector",
+                "purpose": "This component protects the ODrive controllers from damage.",
+                "design": "The shell design from v3 of the motor was too difficult to 3D print: no matter which orientation it was printed in, it required a large amount of support. I split the v3 shell into two components, the controller protector and the shell, which makes 3D printing much faster and uses far less support.",
+                "images": []
+              }
+            },
+            {
+              "file": "electricmotor-0-n7-0-_n15_.STL",
+              "description": {
+                "title": "BLDC Motor",
+                "purpose": "The BLDC motor is the main component of the electric motor assembly. It consists of a stator and a rotor. The stator is the stationary part of the motor that contains the coils or windings, while the rotor is the moving part that contains the magnets. When electric current flows through the stator coils, it creates a rotating magnetic field that interacts with the rotor magnets, causing the rotor to spin. The motor is connected to the gearbox through the back mount.",
+                "design": "This electric motor is modeled from a 100KV U8 motor, which has 21 pole pairs and 36 stator teeth. It has a diameter of 86.8 mm and a thickness of 26.5 mm, making it slightly thicker than the previous Sunnysky motor.",
+                "images": []
+              }
+            },
+            {
+              "file": "odrivecapv5-0-n50-0-180-180-0-_n220_.STL",
+              "description": {
+                "title": "ODrive Cap",
+                "purpose": "The ODrive cap protects the ODrive controller located underneath it.",
+                "design": "This is a purely functional part, made out of necessity.",
+                "images": []
+              }
+            },
+            {
+              "file": "planetLockerHolderv5-0-42-0-_170_.STL",
+              "description": {
+                "title": "Outside Cover",
+                "purpose": "This component covers the gears of the actuator, shielding them from the outside.",
+                "design": "This component used to be crucial for locking the planet gears in place. However, since the bearing has now been moved to the bottom of the ring gear, this component only keeps outside debris from falling into the gears of the actuator.",
+                "images": []
+              }
+            },
+            {
+              "file": "planetLockerv5-0-33-0-_110_.STL",
+              "description": {
+                "title": "Planet Gear",
+                "purpose": "The planet locker and the planet gears are drawn together. They are connected by ball bearings and a rod, and the planet gears are free to rotate. As the planet gears rotate around the ring gear, the planet locker rotates at the designed gear reduction ratio. The planet locker is connected to the output shaft.",
+                "design": "This planetary gearbox is designed with a reduction ratio of 6 (6 input turns produce 1 output turn). Each planet gear has 32 teeth, the sun gear has 16 teeth, and the ring gear has 80 teeth. For simplicity, each gear was designed with a module of 1, so a gear with 32 teeth is 32 mm in diameter. The bottom connects to a ball bearing located at the bottom of the ring gear. There is also an opening in the bottom that lets the sun gear slip in, which allows modular assembly of the actuator.",
+                "images": []
+              }
+            },
+            {
+              "file": "ringgearv5-0-30-0-_55_.STL",
+              "description": {
+                "title": "Ring Gear",
+                "purpose": "The ring gear is the outermost gear of a planetary gearbox, and the planet gears rotate along it. Depending on the design, the ring gear can either remain stationary or rotate. In most robotic actuators, the ring gear is held stationary while the planet gears rotate.",
+                "design": "This ring gear has the same inner workings as the previous version (80 teeth and a gear module of 1). However, it has been condensed considerably, going from 15 mm to 8 mm thick. Previously, the planet locker was connected to the actuator by a bearing that ran along the outside of the actuator (the ball bearing visible from the front of the actuator), which made it harder to access the inside of the actuator. My new design instead connects the planet locker to the bottom of the ring gear, which makes assembly much easier.",
+                "images": []
+              }
+            },
+            {
+              "file": "shellv5-0-0-0-_n80_.STL",
+              "description": {
+                "title": "Actuator Shell",
+                "purpose": "This component holds the actuator in place.",
+                "design": "The shell design from v3 of the motor was too difficult to 3D print: no matter which orientation it was printed in, it required a large amount of support. I split the v3 shell into two components, the controller protector and the shell, which makes 3D printing much faster and uses far less support. The windows of the shell are now roughly oval, which allows it to be 3D printed without any support, and it looks better too.",
+                "images": []
+              }
+            },
+            {
+              "file": "sunspiralv5-0-18-0-_18_.STL",
+              "description": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "robotleg",
+      "thumbnail": "garage/thumbnails/robotleg-clay.png",
+      "versions": [
+        {
+          "version": "0",
+          "data": {
+            "name": "robotic_leg_v1",
+            "opacity": 0.8,
+            "transparent": true,
+            "metalness": 1,
+            "roughness": 0.5
+          },
+          "parts": [
+            {
+              "file": "actuator_joint-68-n4-179-0-n166-_0_(35(.STL",
+              "description": null
+            },
+            {
+              "file": "backleg-n57-20-79-0-n63-_0_(65(.STL",
+              "description": null
+            },
+            {
+              "file": "leglowerfull-0-0-0-0-n126-_0_(n68(n6(.STL",
+              "description": null
+            },
+            {
+              "file": "upperleg-127-0-76-0-149-_0_(70(.STL",
+              "description": null
+            }
+          ]
+        },
+        {
+          "version": "1",
+          "data": {
+            "name": "robotic_leg_v2",
+            "opacity": 0.8,
+            "transparent": true,
+            "metalness": 1,
+            "roughness": 0.5
+          },
+          "parts": [
+            {
+              "file": "actuatorjoint-4-n9-116-0-n132-_0_(23(.STL",
+              "description": null
+            },
+            {
+              "file": "backleg-n27-20-150-0-132-_0_(57(.STL",
+              "description": null
+            },
+            {
+              "file": "lowerleg-n27-0-n20-0-n132-_0_(n6(0(.STL",
+              "description": null
+            },
+            {
+              "file": "upperleg-46-0-62-0-132-_0_(50(.STL",
+              "description": null
+            }
+          ]
+        },
+        {
+          "version": "2",
+          "data": {
+            "name": "robotic_leg_v3",
+            "opacity": 0.8,
+            "transparent": true,
+            "metalness": 1,
+            "roughness": 0.5
+          },
+          "parts": [
+            {
+              "file": "legassm-0-0-0-90-90-n30-_0_(0(.STL",
+              "description": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "testingjig",
+      "thumbnail": "garage/thumbnails/testingjig-clay.png",
+      "versions": [
+        {
+          "version": "0",
+          "data": {
+            "name": "testingjig",
+            "opacity": 0.8,
+            "transparent": true,
+            "metalness": 1,
+            "roughness": 0.5
+          },
+          "parts": [
+            {
+              "file": "bottomPRT-0-n37-n70-90-0-180-_0_.STL",
+              "description": null
+            },
+            {
+              "file": "sliders-0-165-n118-0-0-90-_0_.STL",
+              "description": null
+            },
+            {
+              "file": "sliders2-0-n165-n118-0-0-n90-_0_ .STL",
+              "description": null
+            },
+            {
+              "file": "sliders3-0-n165-150-0-0-n90-_0_.STL",
+              "description": null
+            },
+            {
+              "file": "sliders4-0-165-150-0-0-90-_0_ .STL",
+              "description": null
+            },
+            {
+              "file": "stand-0-0-0-90-_0_.STL",
+              "description": null
+            },
+            {
+              "file": "topPRT-0-11-97-90-0-180-_0_.STL",
+              "description": null
+            },
+            {
+              "file": "woodenbar-0-0-n118-_0_.STL",
+              "description": null
+            },
+            {
+              "file": "woodenbar2-0-0-150-_0_.STL",
+              "description": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

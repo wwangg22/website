@@ -1,0 +1,6 @@
+{
+    "title": "Rotor",
+    "purpose" : "The rotor of a brushless DC (BLDC) motor is the part of the motor that rotates. It consists of permanent magnets arranged around a central shaft. When the stator's electromagnets are energized, they create a magnetic field that interacts with the rotor's permanent magnets, causing the rotor to spin.",
+    "design": "This rotor was designed to fit the 100KV Sunnysky motor, which has 21 pole pairs and 36 stator teeth. The small ridges on the inside of the rotor hold the permanent magnets and are designed with the same air gap as the original motor. The rotor connects to the sun gear through the outer shell. Since I 3D printed most of my build and my 3D printer is not precise enough to produce a reliable rotor, I relied on the original rotor in the second and third iterations.",
+    "images": []
+}

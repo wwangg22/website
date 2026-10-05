@@ -1,0 +1,57 @@
+{
+  "id": "000001",
+  "title": "Hack The Box: PDFy",
+  "author": "will",
+  "date": "2024-08-11T10:07:45.000Z",
+  "cover": "blog/0d3e403a-4256-4836-90f7-35ace2dc1941.png",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "Today's blog will be a quick walkthrough of the PDFy challenge on Hack The Box (HTB)."
+    },
+    {
+      "type": "paragraph",
+      "html": "When we open up the website, we are greeted by this:"
+    },
+    {
+      "type": "image",
+      "src": "blog/0d3e403a-4256-4836-90f7-35ace2dc1941.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "The structure of the website is pretty simple. The user inputs a URL and presses submit, the backend then returns a pdf file of the rendered page. There is only one input field for us to exploit. Playing around with the input field tells us our input needs to contain at least one valid URL in order to successfully send to the backend. However, more interestingly, when we send an invalid URL to the backend, it returns this message:"
+    },
+    {
+      "type": "code",
+      "text": "message : \"There was an error: Error generating PDF: Command '['wkhtmltopdf', '--margin-top', '0', ..."
+    },
+    {
+      "type": "paragraph",
+      "html": "The name wkhtmltopdf seems to point to an existing html to pdf renderer. A quick Google search will confirm our suspicions. Now that we have some idea of what is going on in the backend, we can look for wkhtmltopdf vulnerabilities. Two main vulnerabilities come up: Server-Side Request Forgery (SSRF) and Local File Inclusion. SSRF allows the attacker to make HTTP requests from the server (for example, requesting a particular file on localhost); however, since we are trying to obtain the local /etc/passwd file, Local File Inclusion seems like the more promising choice. The first website I came across showed a possible attack using the iframe tag:"
+    },
+    {
+      "type": "code",
+      "text": "<iframe src=”file:///etc/passwd” height=”500” width=”500”>"
+    },
+    {
+      "type": "paragraph",
+      "html": "This looks like just what we need! I wrote a basic html file and put this element inside the body. I uploaded my html to an AWS S3 bucket and served the html from there. However, after submitting the URL to my malicious html file, the website returned a pdf with a blank iframe. Since it is a blackbox problem, we have no idea if there's some security checks being run behind the scene. I tried a couple more URLs, and none seem to work. This was a little disappointing, but not the end of the world. I go back to Google and start seeing if there's any other variants of this attack that might work. I come across a unique attack using PHP. The PHP code is very simple, it is as follows:"
+    },
+    {
+      "type": "code",
+      "text": "<?php header('location:file:///etc/passwd'); ?>"
+    },
+    {
+      "type": "paragraph",
+      "html": "I am not experienced with PHP at all, but what this code is essentially doing is sending an HTTP header to the client. Once the client receives this request, it will attempt to redirect the client to the local /etc/passwd file. I tried this with my browser, but my browser just blocked the request. But I guess wkhtmltopdf is vulnerable to this attack. I tunneled my PHP server using serveo.net, and submitted the tunneled URL to the website."
+    },
+    {
+      "type": "image",
+      "src": "blog/546909c8-ce64-4626-96ca-9ed4c1327816.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "And... just like that we have the flag! This challenge was fun to solve, and taught me the power of using Google and online resources."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "id": "000021",
+  "title": "Chasing CUB Sort",
+  "author": "will",
+  "date": "2025-09-19T20:18:55.000Z",
+  "cover": "blog/4189ff27-21ab-461e-aad0-dd09b03b09b4.png",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "About a week ago I decided to code my own 3D Gaussian renderer. The idea was to support different kinds of Gaussians (including some recent 4D variants with time being added) and I had two simple goals: learn CUDA and beat the performance of the original 3D Gaussian repo’s renderer."
+    },
+    {
+      "type": "paragraph",
+      "html": "That renderer has a few bottlenecks. One big one is sorting the Gaussians front-to-back every timestep: it’s expensive and unavoidable. So I picked sorting as my first optimization target. Radix sort is widely regarded as the go-to on GPUs, so that’s where I started. The basic idea: trade memory bandwidth for compute to get speed."
+    },
+    {
+      "type": "paragraph",
+      "html": "At first I just wanted something working, so I wrote a single-block Radix sort. That makes life so much easier since threads can sync and share memory. The first version went pretty smoothly. I used 4 RADIX bits (4 bits per pass), which means a 32-bit int needs 8 passes. In theory, bumping up the bits should reduce passes and speed things up."
+    },
+    {
+      "type": "image",
+      "src": "blog/4189ff27-21ab-461e-aad0-dd09b03b09b4.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "But the performance graph said otherwise. Going from 3 → 4 RADIX bits made the sort slower. That was surprising as fewer passes should be faster. My first guess was register pressure reducing occupancy. I checked the compile output."
+    },
+    {
+      "type": "paragraph",
+      "html": "Compilation trace when radix_bits = 3:"
+    },
+    {
+      "type": "code",
+      "text": "ptxas info : Function properties for _Z9RadixSortPiS_ii 0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads ptxas info : Used 41 registers, used 1 barriers, 32 bytes smem, 376 bytes cmem[0]"
+    },
+    {
+      "type": "paragraph",
+      "html": "Compilation trace when radix_bits = 4:"
+    },
+    {
+      "type": "code",
+      "text": "ptxas info : Function properties for _Z9RadixSortPiS_ii 64 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads ptxas info : Used 42 registers, used 1 barriers, 64 bytes cumulative stack size, 64 bytes smem, 376 bytes cmem[0]"
+    },
+    {
+      "type": "paragraph",
+      "html": "I have a laptop with a 4080 GPU, so each SM has 65,536 registers. The compilation trace reports that each thread only takes up 42 registers, and I am only running 256 threads per block, so plenty of headroom. However, I noticed something weird in the logs. With 4 bits, the kernel suddenly had a 64-byte stack frame (it was 0 before). That likely caused the slowdown: accesses to local memory are way slower than registers. In my CUDA code I had:"
+    },
+    {
+      "type": "code",
+      "text": "unsigned c[RADIX];"
+    },
+    {
+      "type": "paragraph",
+      "html": "This array was used to count the counts of my RADIX variables. Apparently the compiler decided this array was too messy to keep entirely in registers, even though it could fit. So I unrolled and hard-coded things (yes, I asked ChatGPT to do this for me) to force register usage."
+    },
+    {
+      "type": "paragraph",
+      "html": "And after compiling:"
+    },
+    {
+      "type": "code",
+      "text": "ptxas info    : Function properties for _Z11RadixSort_4PiS_ii\n    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads\nptxas info    : Used 43 registers, used 1 barriers, 376 bytes cmem[0]"
+    },
+    {
+      "type": "paragraph",
+      "html": "It in fact did eliminate the local stack frame and it fixed the slowdown!"
+    },
+    {
+      "type": "image",
+      "src": "blog/11fb3cb6-6be8-4dfa-b350-401a30b05178.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "(There is no more radix_bits=5 data because I am too lazy to hard-code that as well)"
+    }
+  ]
+}

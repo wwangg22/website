@@ -1,0 +1,97 @@
+{
+  "id": "000022",
+  "title": "Chasing CUB Sort pt. 2",
+  "author": "will",
+  "date": "2025-09-20T14:41:03.000Z",
+  "cover": "blog/5529d5d9-1caf-48b1-bc18-71a9ed7c6b0d.png",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "In my previous blog, I built a super basic single-thread-block Radix sort. It was great on memory (no global memory traffic), but obviously it doesn’t scale. So I quickly hacked together a multi-block version using decoupled look-back to compute offsets on the fly. That first attempt was ~100× slower than the single-block version, even with a larger radix, mostly because I shoved everything into global memory. Then I stumbled on OneSweep and decided to try it. It took longer to implement, so here’s the short version of what happened."
+    },
+    {
+      "type": "paragraph",
+      "html": "I've been learning CUDA from <i>Programming Massively Parallel Processors.</i> OneSweep leans on warp-level multi-split (WLMS), which means heavy use of warp intrinsics like __ballot_sync() and __shfl_sync(). The book did not talk much about warp-level parallelism, so I had to learn the syntax and functions by myself. I got something that seemed to work and felt pretty good about it (foreshadowing)."
+    },
+    {
+      "type": "paragraph",
+      "html": "The first major challenge I ran into was implementing the decoupled lookback. I made the awful design decision of assigning the entire lookback process to a single thread, while the rest of the threads simply waited. Instead of maintaining a flag for every bin, I only used one flag on the first radix bin of each tile. The designated thread would check this flag to decide when it was safe to proceed."
+    },
+    {
+      "type": "paragraph",
+      "html": "The flaw in this approach came from concurrency. When the single thread marked a lookback as “valid,” the rest of the block’s threads immediately began reading the values. The problem is that a block can change its flag back to “invalid” at any time. So even if the flag looked valid a moment ago, it could flip while the other threads were still in the middle of reading."
+    },
+    {
+      "type": "paragraph",
+      "html": "Here’s why: once a threadblock finishes reading the values and computes its offset, it must update its own tile prefix. To do this safely, it first resets the flag to 0 (invalid), applies the prefix update, and only then sets the flag back to 1 (valid). The race condition occurs if another threadblock checks the flag in that small window, seeing it as valid just before it flips, and then tries to read values that are simultaneously being modified."
+    },
+    {
+      "type": "paragraph",
+      "html": "My code at the time looked like this:"
+    },
+    {
+      "type": "code",
+      "text": "if (current_tile > 0){\n        if (threadIdx.x == 0){\n            int k = (current_tile - 1) * (RADIX+1);\n            while (k >= 0) {\n                int flag = atomicAdd(&lookback[k], 0);\n                bool global = (flag == 2);\n                bool local = (flag == 1);\n\n                if (global) {\n                    for (int r = 0; r < RADIX; r++) {\n                        tile_offset[r] += lookback[k + r + 1];\n                    }\n                    break;\n                } else if (local) {\n                    for (int r = 0; r < RADIX; r++) {\n                        tile_offset[r] += lookback[k + r + 1];\n                    }\n                    k -= (RADIX+1);\n                    continue;\n                } else {\n                    __nanosleep(64);\n                }\n            }\n        }\n        if (threadIdx.x == 0) atomicExch(&lookback[current_tile * (RADIX+1)], 0);\n\n        __syncthreads();\n        for (int k = threadIdx.x; k < RADIX; k += blockDim.x) {\n            lookback[current_tile * (RADIX+1) + k + 1] += tile_offset[k];\n        }\n        __syncthreads();\n        if (threadIdx.x == 0) atomicExch(&lookback[current_tile * (RADIX+1)], 2);\n\n    }"
+    },
+    {
+      "type": "paragraph",
+      "html": "As you can see, I even added atomic operators to help stop this race condition, but the problem was inherent. I banged my head at this for several hours before finally switching to a per-thread based decoupled lookback. So now, instead of having one thread in a threadblock perform the decoupled lookback, every thread &lt; RADIX would perform the decoupled lookback for their values only."
+    },
+    {
+      "type": "code",
+      "text": "if (current_tile > 0){\n\n        for (int k = threadIdx.x; k < RADIX; k += blockDim.x) {\n            int prev_tile = (current_tile - 1) * RADIX;\n            while (prev_tile >= 0){\n                int flag = atomicAdd(&lookback[prev_tile + k], 0);\n                bool global = ((flag >> 31) & 1) != 0;\n                bool local  = ((flag >> 30) & 1) != 0;\n\n                if (global){\n                    tile_offset[k] += (flag & 0x3FFFFFFF);\n                    break;\n                } else if (local){\n                    tile_offset[k] += (flag & 0x3FFFFFFF);\n                    prev_tile -= RADIX;\n                }else {\n                    __nanosleep(64);\n                }\n            }\n\n            atomicExch(&lookback[current_tile*(RADIX) + k], (counter_full[8*RADIX + k] + tile_offset[k]) | (1 << 31));\n        }\n        __syncthreads();\n    }"
+    },
+    {
+      "type": "paragraph",
+      "html": "Something to note: I originally did not have the atomic operators on for updating the values, but there would be some race condition that would mess up the values, so adding atomic operators saved it."
+    },
+    {
+      "type": "paragraph",
+      "html": "At that point, it passed a bunch of tests, so I thought I was done. Then I benchmarked against CUB and found my OneSweep was quietly wrong for certain array lengths. I swept N = 2048 → 3000 and saw a pattern:"
+    },
+    {
+      "type": "code",
+      "text": "2304–2431 → fail\n2432–2559 → ok\n2560–2687 → fail"
+    },
+    {
+      "type": "paragraph",
+      "html": "I was using a tile_size = 1024 at the time and a chunk size of 1024 / 256 = 4. So basically each thread was in charge of 4 items. This meant each warp was in charge of 128 items. And looking at the pattern, you can clearly see that it was warp related."
+    },
+    {
+      "type": "code",
+      "text": "2048 + 128*2 = 2304\n2048 + 128*3 = 2432\n2048 + 128*4 = 2560"
+    },
+    {
+      "type": "paragraph",
+      "html": "So I went back to my code where I calculated the intra-warp offset. This was my initial code:"
+    },
+    {
+      "type": "code",
+      "text": "int start = current_tile * TILE_SIZE + warpId * 32 * chunk + laneId;\nint end = min(N, current_tile * TILE_SIZE + (warpId+1) * 32 * chunk);\nfor (int i = start; i < end; i += 32) {\n        unsigned active = __activemask();"
+    },
+    {
+      "type": "paragraph",
+      "html": "Initially, I thought the __activemask will return a mask of all the threads in a warp that hit that command. The idea was the threads that exited (from the for loop condition) would have a 0 in that mask."
+    },
+    {
+      "type": "paragraph",
+      "html": "However, after hours of headache, I realized that was indeed NOT the case. The __activemask will return 1 as long as a thread is active (i.e. has not returned yet), no matter the logic path it is on. The fix was actually quite simple:"
+    },
+    {
+      "type": "code",
+      "text": "int start = current_tile * TILE_SIZE + warpId * 32 * chunk + laneId;\nint end =  current_tile * TILE_SIZE + (warpId+1) * 32 * chunk;\nint part;\nfor (int i = start; i < end; i += 32) {\n        if (i >= N) part  = 0;\n        else part = 1;\n        unsigned active = __ballot_sync(0xFFFFFFFF, part);"
+    },
+    {
+      "type": "paragraph",
+      "html": "Instead of using __activemask, I used a ballot_sync that will return 1 for lanes that are still relevant ( i &lt; N ). But at the same time, for these irrelevant lanes, I still had to keep them in the same logic loop to perform the ballot_sync, so I had to get rid of the min for the end variable. And this fixed it! Here is the graph of the performance of my one_sweep algo vs CUB sort. Of course, my implementation is still very crude and not refined."
+    },
+    {
+      "type": "image",
+      "src": "blog/5529d5d9-1caf-48b1-bc18-71a9ed7c6b0d.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "So from this chart we can see a few things. First of all, there is still a lot of optimization I have to do to OneSweep to get it faster than CUB sort. However, something interesting is that CUB sort actually degrades significantly when we bump up the N to extremely high numbers, while OneSweep remains more consistent."
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+    "title": "Back Mount",
+    "purpose" : "The main purpose of the back mount is to hold the actuator together and provide a mounting point for the ODrive controllers. The gap in the center allows the controllers to read a magnetic encoder connected to the motor shaft.",
+    "design": "I chose a triangular back mount mostly because I liked the look of it. Not having a wall on all sides also made assembling the actuator much easier. The holes on the back of the back mount are mounting holes for the ODrive controller.",
+    "images": []
+}

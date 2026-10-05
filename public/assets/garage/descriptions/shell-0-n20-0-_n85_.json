@@ -1,0 +1,6 @@
+{
+    "title": "Shell",
+    "purpose" : "The shell of the actuator houses the motor and the gearbox. It is the outermost part of the actuator and is designed to protect the internal components from damage. The shell is typically made of a durable material such as aluminum or steel. It also provides a mounting point for the actuator, allowing it to be attached to a robot or other device.",
+    "design": "This design protected the ODrive controllers, which were unprotected in previous versions. 3D printing this piece turned out to be a problem, since one side needed a lot of support. In the end, the bottom of the shell (where the ODrive controllers were attached) did not need a very smooth surface, since the ODrives were elevated anyway, so it turned out fine.",
+    "images": []
+}

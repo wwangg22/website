@@ -1,0 +1,5 @@
+{
+    "maximum extension length in the y axis (from lowest point of body to tip of leg)":"230mm",
+    "minimum retraction length in the y axis (from lowest point of body to tip of leg)":"90mm",
+    "maximum extension length in the x axis (from leftmost point of body to tip of leg)": "240mm"
+}

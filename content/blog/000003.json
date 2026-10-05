@@ -1,0 +1,61 @@
+{
+  "id": "000003",
+  "title": "Solving a Simple Control Problem with Nonlinear Dynamics Analysis",
+  "author": "will",
+  "date": "2024-09-07T02:31:24.000Z",
+  "cover": "blog/fc42ff91-c710-4dc9-8f89-314c6f94fd8c.png",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "I was going through MIT's course on underactuated robotics today and came across this problem whose solution I found to be pretty neat. The question is this:"
+    },
+    {
+      "type": "image",
+      "src": "blog/fc42ff91-c710-4dc9-8f89-314c6f94fd8c.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "The first part of the question asks to find a function with a stable equilibrium point at -1, and the most simple function that satisfies the requirements is:"
+    },
+    {
+      "type": "code",
+      "text": "dq = -(q-1)"
+    },
+    {
+      "type": "paragraph",
+      "html": "This part is not very exciting by itself, but once we reach part b it becomes clear why this step was necessary. Part b asks for the dynamics, which I derived here:"
+    },
+    {
+      "type": "image",
+      "src": "blog/d9c9dc0e-6893-4234-b926-4b59874ab958.jpg"
+    },
+    {
+      "type": "paragraph",
+      "html": "Now, here is the clever part. We can simply grab the function we had in part a, and plug it into part b. We can essentially search for a control variable (u) that will turn the dynamics equation above into"
+    },
+    {
+      "type": "code",
+      "text": "ddtheta = -(dtheta-1)"
+    },
+    {
+      "type": "paragraph",
+      "html": "This can be done with a control variable u of:"
+    },
+    {
+      "type": "code",
+      "text": "u = -m(l^2)(dtheta-1) - ml(w^2)hsin(w*t)cos(theta)+mglsin(theta)"
+    },
+    {
+      "type": "paragraph",
+      "html": "And when we go through the notebook code, we get this result!"
+    },
+    {
+      "type": "image",
+      "src": "blog/e358610c-3e07-4a7f-9a7d-592274deced5.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "Quite an elegant solution."
+    }
+  ]
+}

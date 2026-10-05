@@ -1,0 +1,6 @@
+{
+    "title": "Ring Gear",
+    "purpose" : "The ring gear is the outermost gear of a planetary gearbox, and the planet gears rotate along it. Depending on the design, the ring gear can either remain stationary or rotate. In most robotic actuators, the ring gear is held stationary while the planet gears rotate.",
+    "design": "This ring gear is almost the same as the previous one (80 teeth, gear module of 1), except that its overall shape has been changed to fit the design of the actuator. The inner workings remain identical.",
+    "images": []
+}

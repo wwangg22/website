@@ -1,0 +1,6 @@
+{
+    "title": "Outside Cover",
+    "purpose" : "This component covers the gears of the actuator, shielding them from the outside.",
+    "design": "This component used to be crucial for locking the planet gears in place. However, since the bearing has now been moved to the bottom of the ring gear, this component only keeps outside debris from falling into the gears of the actuator.",
+    "images": []
+}

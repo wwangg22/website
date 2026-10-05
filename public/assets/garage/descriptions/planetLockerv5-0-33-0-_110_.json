@@ -1,0 +1,6 @@
+{
+    "title": "Planet Gear",
+    "purpose" : "The planet locker and the planet gears are drawn together. They are connected by ball bearings and a rod, and the planet gears are free to rotate. As the planet gears rotate around the ring gear, the planet locker rotates at the designed gear reduction ratio. The planet locker is connected to the output shaft.",
+    "design": "This planetary gearbox is designed with a reduction ratio of 6 (6 input turns produce 1 output turn). Each planet gear has 32 teeth, the sun gear has 16 teeth, and the ring gear has 80 teeth. For simplicity, each gear was designed with a module of 1, so a gear with 32 teeth is 32 mm in diameter. The bottom connects to a ball bearing located at the bottom of the ring gear. There is also an opening in the bottom that lets the sun gear slip in, which allows modular assembly of the actuator.",
+    "images": []
+}

@@ -1,0 +1,37 @@
+{
+  "id": "000000",
+  "title": "Designing the Actuator",
+  "author": "will",
+  "date": "2024-08-08T07:30:51.000Z",
+  "cover": "blog/c6c9ee7e-24c3-41be-b9df-17fe10ad0b8c.png",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "Sometime in June, I came across Aaed Musa's YouTube channel. He made a video a couple months back showcasing his design of a 3-D printed planetary gearbox. What blew my mind was that it was all 3-D printed. I loved the flexibility of being able to design and make all the parts in-house (literally), and I thought creating a 3-D printed actuator would make for a worthwhile endeavor. Initially, I did not have a clear goal of the actuator, other than that it would hopefully lead into a robot leg of sorts."
+    },
+    {
+      "type": "paragraph",
+      "html": "My first real design inspiration came from MIT's mini cheetah paper. This design chose to house the ring gear inside of the stator, which allows for an extremely compact design."
+    },
+    {
+      "type": "image",
+      "src": "blog/c6c9ee7e-24c3-41be-b9df-17fe10ad0b8c.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "After some initial inspiration, I set out and found an electric motor similar to the specs given by the MIT paper. The specs are as follows:"
+    },
+    {
+      "type": "image",
+      "src": "blog/fca7f07a-ee82-428f-8166-d035874e2e83.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "The initial idea was to disassemble the stator wiring completely from the motor. In doing so, I can design a planetary gearbox that goes inside the inner diameter of the stator. However, after hours of trying to remove the stator, the stator wouldn't budge at all. So I ended up settling on placing the ring gear right above the stator. In doing so, the rotor would have to be redesigned. This was a bad design choice looking back. The rotor is wayyy too long to provide reliable operation given the airgap between the rotor and stator was only a couple mm."
+    },
+    {
+      "type": "paragraph",
+      "html": "As for my gear ratio, I decided to mimic MIT's gear ratio of 6:1. To calculate the number of teeth, I just had to apply a couple of equations. The first being: S/(S+R) where S = number of teeth on sun gear and R = number of teeth on ring gear, S = number of teeth on sun gear. To calculate the number of teeth on planets required this equation: R = 2 * P + S, where R and S are the same as above and P = number of teeth on planet gear. Also, one last equation is important if you want your planet gears to be evenly spaced around the sun: (R+S) / N where R and S are the same and N = the number of planets (3 in my case). I chose a gear module of 1 (which means that the diameter of my gears is equal to the teeth on the gears). My final design numbers were R = 80, P = 32, and S = 16. Notice that the inner diameter of the ring gear was almost the same size as the outer diameter of the electric motor. I convinced myself that the sun gear should have at least 10+ teeth for good measure, and that the ring gear was going on top of the stator anyways. Another bad design choice I made was I used double herringbone gears for my gearbox. In theory, they are the best gears to use, but they are a PAIN to assemble in practice."
+    }
+  ]
+}

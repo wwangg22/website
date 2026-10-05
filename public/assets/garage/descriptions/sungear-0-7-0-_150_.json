@@ -1,0 +1,6 @@
+{
+    "title": "Sun Gear",
+    "purpose" : "The sun gear is connected to the input shaft, which means it receives power directly from the motor. As the sun gear spins, it turns the planet gears, which then rotate around the ring gear, the outermost gear in the system. This arrangement allows the planetary gearbox to provide high torque and smooth power transmission in a compact design.",
+    "design": "In this sun gear, the long shafts connect the sun gear to the rotor. This design is compact, allowing the planetary gearbox to be placed inside the motor. However, during operation the entire outer shell rotates at the same speed as the rotor, which can be quite dangerous. Designing this part was fun, but because I chose a double herringbone pattern, installation was very difficult, which ultimately led me to design a second version.",
+    "images": []
+}

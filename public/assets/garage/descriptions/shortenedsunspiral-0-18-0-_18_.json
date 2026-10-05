@@ -1,0 +1,6 @@
+{
+    "title": "Sun Gear",
+    "purpose" : "The sun gear is connected to the input shaft, which means it receives power directly from the motor. As the sun gear spins, it turns the planet gears, which then rotate around the ring gear, the outermost gear in the system. This arrangement allows the planetary gearbox to provide high torque and smooth power transmission in a compact design.",
+    "design": "This sun gear is the same as the previous one, just shortened slightly to fit the U8 motor (which is slightly thicker than the Sunnysky motors).",
+    "images": []
+}

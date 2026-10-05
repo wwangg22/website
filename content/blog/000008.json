@@ -1,0 +1,97 @@
+{
+  "id": "000008",
+  "title": "LQRs on Inverted Pendulum Problem",
+  "author": "will",
+  "date": "2024-10-17T19:27:54.000Z",
+  "cover": "blog/4406f46b-90c5-4905-9ddc-1994b60ada8d.gif",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "Linear Quadratic Regulators (LQRs) offer a powerful yet lightweight method for designing controllers. In my previous blog post, I used a neural network to approximate my system's cost function and then analytically derived the optimal policy, assuming the control was affine. That approach required extensive tuning and training of the neural network. By contrast, LQR provides a much more compact and elegant solution. I decided to test it out on the classic cart-pole problem."
+    },
+    {
+      "type": "image",
+      "src": "blog/4406f46b-90c5-4905-9ddc-1994b60ada8d.gif"
+    },
+    {
+      "type": "paragraph",
+      "html": "However, since LQR assumes that a particular point is both a fixed point and stabilizable in finite time, I opted to apply it specifically to the inverted pendulum case, where the goal is to keep the pendulum balanced above a moving cart. The pendulum remains above the cart throughout the process, never swinging below. Now, let's dive into the mathematics behind this approach:"
+    },
+    {
+      "type": "image",
+      "src": "blog/3f831cca-c60d-48a2-8e94-e9e147d56724.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "The beauty of an LQR controller lies in its simplicity: once the algebraic Riccati equation is solved, the optimal control is computed by multiplying a matrix with the current state of the system. While solving this Riccati equation can be challenging, it's a well-studied problem with plenty of resources available online. One helpful resource I found is the equation from Wikipedia:"
+    },
+    {
+      "type": "image",
+      "src": "blog/0512ed53-2dd0-4d50-bf15-ba1ff36b7a5f.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "Implementing the LQR solution was fairly straightforward. I used MuJoCo as the simulator and NumPy for handling the matrices. The first step was to define the A, B, Q, and R matrices. The Q and R matrices represent the cost functions we choose. Since the state vector is [x, theta, x_dot, theta_dot], I heavily penalized deviations in theta (pendulum angle) while applying a lighter penalty to x (cart position), as our main objective is to balance the pendulum. The corresponding code looks like this:"
+    },
+    {
+      "type": "code",
+      "text": "target_state = [0, 0, 0, 0]\n\nQ = np.diag([0.1,25,1,5])\nR = np.diag([1])"
+    },
+    {
+      "type": "paragraph",
+      "html": "To get the A and B matrices, I chose to approximate instead of calculate analytically. Using the Mujoco simulator, I would perturb the state by a small value and see the effects. This is done in the code below:"
+    },
+    {
+      "type": "code",
+      "text": "state_dynamics_x = np.zeros((len(target_state),len(target_state)))\ndstate_dynamics_du = np.zeros((len(target_state),1))\ntemp = np.zeros(len(target_state))\nfor i in range(len(target_state)):\n   d.ctrl[0] = 0\n    d.qpos = target_state[:2]\n    d.qvel = target_state[2:]\n    if i >=2:\n        d.qvel[i-2] += e\n    else:\n        d.qpos[i] += e\n    mujoco.mj_forward(m, d)\n    state_dynamics_x[:2, i] = d.qvel\n    state_dynamics_x[2:, i] = d.qacc\nd.qpos = target_state[:2]\nd.qvel = target_state[2:]\nd.ctrl[0] = 0\nmujoco.mj_forward(m, d)\ntemp[:2] = d.qvel\ntemp[2:] = d.qacc\nd.qpos = target_state[:2]\nd.qvel = target_state[2:]\nd.ctrl[0] =  e\nmujoco.mj_forward(m, d)\ndstate_dynamics_du[:2,0] = d.qvel - temp[:2]\ndstate_dynamics_du[2:,0] = d.qacc - temp[2:]\nd.ctrl[0] = 0\n\nA = state_dynamics_x\nB = dstate_dynamics_du"
+    },
+    {
+      "type": "paragraph",
+      "html": "Using state_dynamics_x and dstate_dynamics_du helped me keep track of which one was A and which one was B. Now that we have our matrices, we are ready to solve the Algebraic Riccati equation."
+    },
+    {
+      "type": "code",
+      "text": "BR_inv_B_T = B @ np.linalg.inv(R) @ B.T\nZ = np.block([[A, -BR_inv_B_T], [-Q, -A.T]])\n\nn = 4\n\neigenvalues, eigenvectors = np.linalg.eig(Z)\nnegative_real_indices = np.argsort(np.real(eigenvalues))[:n]\nU = eigenvectors[:, negative_real_indices]\n\nn = A.shape[0]\nU_1_1 = U[:n, :]\nU_2_1 = U[n:, :]\n\nP = U_2_1 @ np.linalg.inv(U_1_1)"
+    },
+    {
+      "type": "paragraph",
+      "html": "Once we get our P matrix, we can easily create a function that calculates the optimal control policy given the current state:"
+    },
+    {
+      "type": "code",
+      "text": "def calc_output(x):\n   return -np.linalg.inv(R) @ B.T @ P @ x"
+    },
+    {
+      "type": "paragraph",
+      "html": "Now we simulate!"
+    },
+    {
+      "type": "paragraph",
+      "html": "Here are some GIFs of the controller’s performance given a random impulse applied to the pendulum every 5ish seconds."
+    },
+    {
+      "type": "image",
+      "src": "blog/7d87cdc5-2a56-4a15-a7c9-367f423dd3e6.gif"
+    },
+    {
+      "type": "paragraph",
+      "html": "Just for fun, I wanted to see what would happen if I used this controller to try to swing the pendulum upwards."
+    },
+    {
+      "type": "image",
+      "src": "blog/a79518ac-1ed6-4d1b-b4aa-165a1ecafdd4.gif"
+    },
+    {
+      "type": "paragraph",
+      "html": "Let’s track the cartpole with our camera so we can actually see what’s going on."
+    },
+    {
+      "type": "image",
+      "src": "blog/fa13d9b0-6e87-46fc-b49d-e5a9ddfb42ea.gif"
+    },
+    {
+      "type": "paragraph",
+      "html": "Clearly, the controller falls apart when the pendulum is below the halfway point."
+    }
+  ]
+}

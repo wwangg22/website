@@ -1,0 +1,129 @@
+{
+  "id": "000004",
+  "title": "cFVI for simple cartpole problem",
+  "author": "will",
+  "date": "2024-10-16T05:15:47.000Z",
+  "cover": "blog/95801166-317c-4a93-a179-058f63b62b4f.png",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "Control theory is a fascinating field within robotics, and I recently became interested in it through MIT’s Underactuated Robotics course online. In this blog, I’ll focus on my experience implementing a control algorithm called Continuous Value Fitted Iteration (cVFI), which is introduced briefly in the course. The core idea behind the algorithm is to use a small neural network to approximate the cost-to-go function and then analytically derive the optimal control based on this estimated function. You can see the mathematical model here:"
+    },
+    {
+      "type": "image",
+      "src": "blog/95801166-317c-4a93-a179-058f63b62b4f.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "To test out this controller, I applied it to a classic cart-pole problem. The objective is to swing up a pendulum attached to a cart and balance it by only moving the cart. For visualization, I used Mujoco as the simulator, and PyTorch for the neural network. While the implementation of the code is relatively straightforward, it’s also quite error-prone, and it took me a few tries to get everything working correctly."
+    },
+    {
+      "type": "paragraph",
+      "html": "The first step involves defining a few key functions:"
+    },
+    {
+      "type": "code",
+      "text": "def compute_quadratic_cost(Q, data):\n    assert Q.shape[0] == data.shape[0]\n    if len(data.shape) != 2:\n        data = data.reshape(-1, 1)\n    cost = (data * (Q @ data)).sum(axis=0)\n    return cost\n\ndef compute_state_cost(Q, target_state, data):\n    if len(data.shape) != 2:\n        data = data.reshape(-1, 1)\n    #since theta is periodic\n    data[1] = data[1] % (2 * np.pi)\n    return ((data - target_state) * (Q @ (data - target_state))).sum(axis=0)\n\ndef compute_u_star(R_diag, dJdX, dstate_dynamics_du):\n    assert dJdX.shape[1] == dstate_dynamics_du.shape[2]\n    assert dJdX.shape[0] == dstate_dynamics_du.shape[0]\n    inv_R = 1 / R_diag\n    #the analytically derived optimal control\n    u_star = -(1/2) * inv_R @ torch.einsum('sin, sn -> in', dstate_dynamics_du, dJdX)\n    u_star = u_star.reshape(1, -1)\n    return u_star"
+    },
+    {
+      "type": "paragraph",
+      "html": "The Q matrix will be defined later, but it is a diagonal matrix. For the neural network, I decided to use a multilayer perceptron. The class definition is given here:"
+    },
+    {
+      "type": "code",
+      "text": "class MLP(nn.Module):\n    def __init__(self, use_sin_cos_for_input, remaining_layers, activation_types):\n        super(MLP, self).__init__()\n        self.use_sin_cos_for_input = use_sin_cos_for_input\n        input_size = sum(2 if use else 1 for use in use_sin_cos_for_input)\n        layers = []\n        prev_size = input_size\n        for i, layer_size in enumerate(remaining_layers):\n            layers.append(nn.Linear(prev_size, layer_size))\n            if activation_types[i] == 'ReLU':\n                layers.append(nn.ReLU())\n            elif activation_types[i] == 'Identity':\n                layers.append(nn.Identity())\n            prev_size = layer_size\n        self.model = nn.Sequential(*layers).to(device)\n\n    def forward(self, x):\n        transformed_input = []\n        for i, use in enumerate(self.use_sin_cos_for_input):\n            if use:\n                transformed_input.append(torch.sin(x[:, i:i+1]))\n                transformed_input.append(torch.cos(x[:, i:i+1]))\n            else:\n                transformed_input.append(x[:, i:i+1])\n        x = torch.cat(transformed_input, dim=1)\n        return self.model(x)"
+    },
+    {
+      "type": "paragraph",
+      "html": "The only interesting part of the MLP is that you have the option to switch one of the inputs as sin(x), cos(x), which is necessary for the theta input, as theta is periodic and you want the neural network to treat theta=0 and theta=2*pi the same."
+    },
+    {
+      "type": "paragraph",
+      "html": "I first initialized some sample states arbitrarily:"
+    },
+    {
+      "type": "code",
+      "text": "x_states_cart = np.linspace(-2, 2, 10)\ntheta_states_cart = np.linspace(0, 2 * np.pi, num_samples)\nx_dot_states_cart = np.linspace(-10, 10, num_samples-20)\ntheta_dot_states_cart = np.linspace(-10, 10, num_samples-20)\nstate_grid_cart = np.meshgrid(x_states_cart, theta_states_cart,\n    x_dot_states_cart, theta_dot_states_cart, indexing=\"xy\")"
+    },
+    {
+      "type": "paragraph",
+      "html": "I used numpy here to derive the states, even though later I will need to convert them to torch tensors. The theta states are by far the most important (since we are trying to balance the pendulum), so our samples will contain more theta states."
+    },
+    {
+      "type": "paragraph",
+      "html": "We define the Q and R matrices for determining the cost as such:"
+    },
+    {
+      "type": "code",
+      "text": "Q = torch.diag(torch.tensor([0.1, 25, 1, 5], dtype=torch.float32))\nR_diag = torch.tensor(np.array([1]), dtype=torch.float32)"
+    },
+    {
+      "type": "paragraph",
+      "html": "The state matrix is given as [ x, theta, x dot, theta dot]. Looking at the Q matrix, we are heavily penalizing deviations from the desired theta while lightly penalizing deviations from the desired x."
+    },
+    {
+      "type": "paragraph",
+      "html": "The layers of our MLP are defined as follows:"
+    },
+    {
+      "type": "code",
+      "text": "use_sin_cos = [False, True, False, False]\nremaining_layers = [128, 128, 1]\nactivation_types = ['ReLU', 'ReLU','Identity']"
+    },
+    {
+      "type": "paragraph",
+      "html": "We need to use sin and cos for the theta state, so the second element is set to true. Before we start training, we need to derive the df / dx and df / du from the HJB equation shown above. We do not have to calculate this analytically, we can simply approximate it using the simulator."
+    },
+    {
+      "type": "code",
+      "text": "for i in range(num_samples):\n    d.ctrl[0] = 0\n    d.qpos = [state_samples[0, i].item(), state_samples[1, i].item()]\n    d.qvel = [state_samples[2, i].item(), state_samples[3, i].item()]\n    mujoco.mj_forward(m, d)\n    state_dynamics_x[i, :2] = d.qvel\n    state_dynamics_x[i, 2:] = d.qacc\n    for j in range(num_inputs):\n        d.qpos = [state_samples[0, i].item(), state_samples[1, i].item()]\n        d.qvel = [state_samples[2, i].item(), state_samples[3, i].item()]\n        d.ctrl[0] = 1\n        mujoco.mj_forward(m, d)\n        dstate_dynamics_du[:2, j, i] = d.qvel - state_dynamics_x[i,:2]\n        dstate_dynamics_du[2:, j, i] = d.qacc - state_dynamics_x[i, 2:]\n        d.ctrl[0] = 0"
+    },
+    {
+      "type": "paragraph",
+      "html": "We can approximate df / du as well by setting the control input to 1, and calculating the output dynamics of the robot. The timestep I used in the simulator here is 0.01."
+    },
+    {
+      "type": "paragraph",
+      "html": "The code here does the optimization:"
+    },
+    {
+      "type": "code",
+      "text": "batch_states_grad = state_samples[:, batch].requires_grad_(True).to(device)\nJ = value_mlp.forward(batch_states_grad.T)\ndJdX = torch.autograd.grad(J.sum(), batch_states_grad, create_graph=True, retain_graph=True)[0]\nu_star = compute_u_star(R_diag, dJdX, dstate_dynamics_du[:, :, batch].to(device))\nif input_limits is not None:\n    u_star = torch.clamp(u_star, input_limits[0], input_limits[1])\nXnext = batch_states_grad + time_step * (state_dynamics_x[batch, :].T + torch.einsum('sin,in->sn', dstate_dynamics_du[:, :, batch], u_star))\nCost = time_step * (compute_quadratic_cost(R_diag.reshape(1,1), u_star) + state_cost_function(Xnext))\nJnext = value_mlp.forward(Xnext.T).detach()\nJd = Cost.reshape(-1, 1) + discount_factor * Jnext\nfor i in range(optim_steps_per_epoch):\n    J_pred = value_mlp.forward(batch_states_grad.T)\n    loss = nn.MSELoss()(J_pred, Jd.detach())\n    optimizer.zero_grad()\n    loss.backward()\n    optimizer.step()"
+    },
+    {
+      "type": "paragraph",
+      "html": "First, we evaluate the estimated J and dJdX using our neural network. Then, we compute the optimal control policy using this J function. Xnext can be approximated using our optimal control policy and the state derivatives calculated earlier. Jnext is calculated using the new Xnext. Now, we can derive J desired by implementing the previous equation."
+    },
+    {
+      "type": "paragraph",
+      "html": "I had to tune some hyperparameters when training my MLP. These were the different hyperparameters I could mess with:"
+    },
+    {
+      "type": "code",
+      "text": "discount_factor=0.999, lr=0.001, minibatch=256, epochs=1000, optim_steps_per_epoch=100,"
+    },
+    {
+      "type": "paragraph",
+      "html": "I ran a program that evaluated the controller using various combinations of hyperparameters. The results are shown:"
+    },
+    {
+      "type": "image",
+      "src": "blog/c64de53b-1f72-4b7b-8770-5f638d23e09c.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "The most optimal controller was trained using these hyperparameters:"
+    },
+    {
+      "type": "code",
+      "text": "discount_factor=0.999, lr=2e-4, minibatch=512, epochs=500, optim_steps_per_epoch=50,"
+    },
+    {
+      "type": "paragraph",
+      "html": "This is a GIF of the controller in action (keep in mind I added a random impulse that would be applied to the pendulum every 5 ish seconds (hence why the cartpole has sudden jolts))."
+    },
+    {
+      "type": "image",
+      "src": "blog/08552f73-274b-43ba-95f3-ad1385e56cff.gif"
+    }
+  ]
+}

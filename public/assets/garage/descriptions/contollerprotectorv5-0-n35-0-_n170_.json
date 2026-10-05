@@ -1,0 +1,6 @@
+{
+    "title": "Controller Protector",
+    "purpose" : "This component protects the ODrive controllers from damage.",
+    "design": "The shell design from v3 of the motor was too difficult to 3D print: no matter which orientation it was printed in, it required a large amount of support. I split the v3 shell into two components, the controller protector and the shell, which makes 3D printing much faster and uses far less support.",
+    "images": []
+}

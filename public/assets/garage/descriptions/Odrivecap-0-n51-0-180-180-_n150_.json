@@ -1,0 +1,6 @@
+{
+    "title": "ODrive Cap",
+    "purpose" : "The ODrive cap protects the ODrive controller located underneath it.",
+    "design": "This is a purely functional part, made out of necessity.",
+    "images": []
+}

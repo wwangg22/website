@@ -1,0 +1,57 @@
+{
+  "id": "000002",
+  "title": "Learning Trajectory Optimization Pt. 1",
+  "author": "will",
+  "date": "2024-09-06T16:45:59.000Z",
+  "cover": "blog/56412c0f-60d0-49ec-a008-a1e6a0534ae9.png",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "My motivation for learning trajectory optimization started with trying to figure out how high my robot leg can jump, given its physical limits. At first, I thought some machine learning algorithm could come in handy, like the ones you see on YouTube. However, those proved too complicated for my simple use-case. I only needed to optimize a 2 DOF robot leg. That's when I discovered Trajectory Optimization. The essence of trajectory optimization is pretty straightforward, you optimize over a trajectory with a given objective function. However, in the real world, you have to account for physical limits as well."
+    },
+    {
+      "type": "paragraph",
+      "html": "To account for these physical limits, many trajectory optimization problems use non-linear programming as solvers. These non-linear programming allows for nonlinear constraints and equality functions. I am still learning the inner workings of non-linear programming, but essentially here is how it works:"
+    },
+    {
+      "type": "image",
+      "src": "blog/56412c0f-60d0-49ec-a008-a1e6a0534ae9.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "With this, we still cannot optimize over a trajectory because a trajectory is a continuous function, while this nonlinear program only solves over a discrete number of decision variables."
+    },
+    {
+      "type": "paragraph",
+      "html": "We need to discretize the trajectory using direct collocation. An image of direct collocation is shown below:"
+    },
+    {
+      "type": "image",
+      "src": "blog/8076c5f7-b0fe-4805-b91f-9c8daaafcfd3.png"
+    },
+    {
+      "type": "paragraph",
+      "html": "The different collocation points can be connected by a polynomial to create a smooth path. Now, we can put all these collocation points into a single vector and send it to the nonlinear program."
+    },
+    {
+      "type": "image",
+      "src": "blog/4d12cfe4-6fc1-431e-90ff-59ec41c9c9a8.jpg"
+    },
+    {
+      "type": "paragraph",
+      "html": "The most important constraint (the dynamics) can be calculated as such:"
+    },
+    {
+      "type": "image",
+      "src": "blog/05fb1c9f-4f56-492b-be1e-4c3d24c3a730.jpg"
+    },
+    {
+      "type": "paragraph",
+      "html": "After that, you can use it! I used Matlab's fmincon as my nonlinear program solver. I tried it on a simple double pendulum problem, where the objective is to balance the double pendulums upside down, while only actuating the second joint (elbow). Here is the trajectory output:"
+    },
+    {
+      "type": "image",
+      "src": "blog/70089ce4-ffb7-4cd9-b046-4f3e2a37fe37.png"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+    "title": "Planet Gear",
+    "purpose" : "The planet locker and the planet gears are drawn together. They are connected by ball bearings and a rod, and the planet gears are free to rotate. As the planet gears rotate around the ring gear, the planet locker rotates at the designed gear reduction ratio. The planet locker is connected to the output shaft.",
+    "design": "This planet locker is quite similar to the previous version, and each planet gear has 32 teeth. The main difference is that the output shaft is much shorter than before, which again increases its strength and rigidity, allowing it to output higher torque before failure.",
+    "images": []
+}

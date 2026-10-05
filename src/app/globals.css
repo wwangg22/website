@@ -1,0 +1,332 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --bg: #e9e3db;
+  --surface: #f3eee7;
+  --well: #ded6cc;
+  --ink: #37323a;
+  --ink-soft: #5f5861;
+  --shadow-dark: rgba(140, 122, 104, 0.28);
+  --shadow-light: rgba(255, 255, 255, 0.6);
+  --inset-dark: rgba(140, 122, 104, 0.14);
+  --inset-light: rgba(255, 255, 255, 0.7);
+  --coral: #d39a89;
+  --mint: #a2bfab;
+  --lavender: #b0a6ca;
+  --butter: #d9c38e;
+  --sky: #9cb5ca;
+  --on-accent: #332e36;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #1e1c21;
+  --surface: #29262d;
+  --well: #18161b;
+  --ink: #ebe6ec;
+  --ink-soft: #a199a6;
+  --shadow-dark: rgba(0, 0, 0, 0.5);
+  --shadow-light: rgba(255, 255, 255, 0.04);
+  --inset-dark: rgba(0, 0, 0, 0.3);
+  --inset-light: rgba(255, 255, 255, 0.05);
+  --coral: #b97d6c;
+  --mint: #7c9f88;
+  --lavender: #8d83b0;
+  --butter: #b89f62;
+  --sky: #7491aa;
+  --on-accent: #1b191d;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-well: var(--well);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-coral: var(--coral);
+  --color-mint: var(--mint);
+  --color-lavender: var(--lavender);
+  --color-butter: var(--butter);
+  --color-sky: var(--sky);
+  --color-on-accent: var(--on-accent);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-code);
+}
+
+/*
+ * Fluid scale. Each step grows linearly from a 320px to a 1280px viewport,
+ * then holds; above 1280px the root size below lifts everything a little so
+ * wide screens don't look sparse. Use as text-display / text-title /
+ * text-headline / text-heading / text-lede, and p-/px-/gap- with frame, tile,
+ * card, gutter and section.
+ */
+@theme {
+  --text-display: clamp(2.25rem, 1.75rem + 2.5vw, 3.75rem);
+  --text-display--line-height: 1.1;
+  --text-title: clamp(2rem, 1.6667rem + 1.6667vw, 3rem);
+  --text-title--line-height: 1.15;
+  --text-headline: clamp(1.75rem, 1.5rem + 1.25vw, 2.5rem);
+  --text-headline--line-height: 1.2;
+  --text-heading: clamp(1.5rem, 1.3333rem + 0.8333vw, 2rem);
+  --text-heading--line-height: 1.25;
+  --text-lede: clamp(1.125rem, 1.0833rem + 0.2083vw, 1.25rem);
+  --text-lede--line-height: 1.6;
+
+  --spacing-frame: clamp(0.5rem, 0.4167rem + 0.4167vw, 0.75rem);
+  --spacing-tile: clamp(1rem, 0.8333rem + 0.8333vw, 1.5rem);
+  --spacing-card: clamp(1.5rem, 1.1667rem + 1.6667vw, 2.5rem);
+  --spacing-gutter: clamp(1rem, 0.6667rem + 1.6667vw, 2rem);
+  --spacing-section: clamp(2rem, 1.6667rem + 1.6667vw, 3rem);
+
+  --ease-clay: cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
+/* The two page containers: wide for home, indexes and the garage; read for write-ups and posts. */
+@utility page-wide {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 64rem;
+  padding: var(--spacing-section) var(--spacing-gutter);
+}
+@utility page-read {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 48rem;
+  padding: var(--spacing-section) var(--spacing-gutter);
+}
+
+/* Static label (tags, metadata). Flat on purpose: it is not a control. */
+@utility chip {
+  border-radius: 999px;
+  background: var(--well);
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+/* Intrinsic card grid: as many columns of at least --card-min as fit. */
+@utility grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min, 18rem)), 1fr));
+}
+
+/* 16px up to 1280px wide, easing to 18px at 1920px; respects the user's base size. */
+html {
+  font-size: clamp(100%, 0.75rem + 0.3125vw, 112.5%);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+/* Charts and photos with white backgrounds shouldn't glare on dark surfaces. */
+[data-theme="dark"] :where(figure, a) img {
+  filter: brightness(0.86);
+}
+
+:focus-visible {
+  outline: 3px solid var(--lavender);
+  outline-offset: 3px;
+}
+
+@layer components {
+  /* Raised clay surface. Tint it with an accent-* class or --clay-color. */
+  .clay {
+    background: var(--clay-color, var(--surface));
+    border-radius: 1.25rem;
+    box-shadow:
+      6px 6px 16px var(--shadow-dark),
+      -6px -6px 14px var(--shadow-light),
+      inset -3px -3px 6px var(--inset-dark),
+      inset 3px 3px 6px var(--inset-light);
+  }
+
+  .clay-sm {
+    background: var(--clay-color, var(--surface));
+    border-radius: 0.75rem;
+    box-shadow:
+      4px 4px 10px var(--shadow-dark),
+      -4px -4px 9px var(--shadow-light),
+      inset -2px -2px 4px var(--inset-dark),
+      inset 2px 2px 4px var(--inset-light);
+  }
+
+  /* Pressed-in well: inputs, code blocks, media frames. */
+  .clay-inset {
+    background: var(--well);
+    border-radius: 0.75rem;
+    box-shadow:
+      inset 5px 5px 10px var(--inset-dark),
+      inset -5px -5px 10px var(--inset-light);
+  }
+
+  /* Squishy button / pill. Combine with accent-* for colour. */
+  .clay-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--clay-color, var(--surface));
+    box-shadow:
+      3px 3px 8px var(--shadow-dark),
+      -3px -3px 7px var(--shadow-light),
+      inset -2px -2px 4px var(--inset-dark),
+      inset 2px 2px 4px var(--inset-light);
+    transition: transform 0.2s var(--ease-clay), box-shadow 0.2s var(--ease-clay);
+  }
+  @media (hover: hover) {
+    .clay-btn:hover {
+      transform: translateY(-1px);
+    }
+  }
+  .clay-btn:active,
+  .clay-btn[aria-pressed="true"] {
+    transform: scale(0.97);
+    box-shadow:
+      2px 2px 5px var(--shadow-dark),
+      -2px -2px 5px var(--shadow-light),
+      inset 4px 4px 8px var(--inset-dark),
+      inset -4px -4px 8px var(--inset-light);
+  }
+  .clay-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Card that lifts on hover (for links). Same easing as .clay-btn; presses settle faster than they release. */
+  .clay-lift {
+    transition: transform 0.25s var(--ease-clay), translate 0.25s var(--ease-clay);
+  }
+  @media (hover: hover) {
+    .clay-lift:hover {
+      transform: translateY(-3px);
+    }
+  }
+  .clay-lift:active {
+    transform: scale(0.985);
+  }
+  .clay-btn:active,
+  .clay-lift:active {
+    transition-duration: 0.1s;
+  }
+
+  .accent-coral { --clay-color: var(--coral); color: var(--on-accent); }
+  .accent-mint { --clay-color: var(--mint); color: var(--on-accent); }
+  .accent-lavender { --clay-color: var(--lavender); color: var(--on-accent); }
+  .accent-butter { --clay-color: var(--butter); color: var(--on-accent); }
+  .accent-sky { --clay-color: var(--sky); color: var(--on-accent); }
+}
+
+/*
+ * Cards and sections ease in as they scroll into view, where scroll-driven
+ * animations exist (elsewhere, and in print, they are simply there). Progress
+ * follows scroll position, not time, so nothing can be left half-faded.
+ */
+@supports (animation-timeline: view()) {
+  @media screen and (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      /* Done once it is fully in, or 10rem in for anything taller. */
+      animation-range: entry 0% entry min(100%, 10rem);
+    }
+    .reveal .reveal {
+      animation: none;
+    }
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+}
+
+/*
+ * Page navigation (React <ViewTransition>, see app/template.tsx): pages
+ * crossfade, shared elements (components/Morph.tsx) morph, the nav holds still.
+ */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 300ms;
+  animation-timing-function: var(--ease-clay);
+}
+::view-transition-old(.page-out) {
+  animation: 120ms ease-in both vt-fade-out;
+}
+::view-transition-new(.page-in) {
+  animation: 200ms ease-out 100ms both vt-fade-in;
+}
+/* Titles often rewrap between pages: drop the old text quickly so it doesn't ghost. */
+::view-transition-old(.morph) {
+  animation-duration: 150ms;
+}
+/* Entering pages are stacked last, so lift shared elements above them. */
+::view-transition-group(.morph),
+::view-transition-group(.morph-media) {
+  z-index: 1;
+}
+::view-transition-old(.morph-media),
+::view-transition-new(.morph-media) {
+  height: 100%;
+  object-fit: cover;
+  overflow: clip;
+}
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
